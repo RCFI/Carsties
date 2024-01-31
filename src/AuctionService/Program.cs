@@ -12,9 +12,6 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
-
-app.UseRouting();
 app.MapControllers();
 
 try

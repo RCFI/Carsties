@@ -89,6 +89,11 @@ public class AuctionsController(AuctionDbContext dbContext, IMapper mapper, IPub
         auction.Item.Color = updateAuctionCommand.Color ?? auction.Item.Color;
         
         _dbContext.Update(auction);
+
+        var auctionUpdated = _mapper.Map<AuctionUpdated>(auction.Item);
+        auctionUpdated.Id = auction.Id.ToString();
+        await _publishEndpoint.Publish(auctionUpdated);
+
         var result = await _dbContext.SaveChangesAsync() > 0;
         
         if (result)
@@ -109,6 +114,9 @@ public class AuctionsController(AuctionDbContext dbContext, IMapper mapper, IPub
         }
         
         _dbContext.Auctions.Remove(auction);
+        
+        await publishEndpoint.Publish(new AuctionDeleted { Id = auction.Id.ToString() });
+        
         var result = await _dbContext.SaveChangesAsync() > 0;
         
         if (result)

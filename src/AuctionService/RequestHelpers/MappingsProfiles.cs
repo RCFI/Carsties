@@ -22,5 +22,6 @@ public class MappingsProfiles : Profile
         CreateMap<UpdateAuctionCommand, Item>();
 
         CreateMap<AuctionDto, AuctionCreated>();
+        CreateMap<Item, AuctionUpdated>();
     }
 }

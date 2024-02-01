@@ -1,8 +1,8 @@
-﻿using System.Security.Cryptography.Xml;
-using AuctionService.Data;
+﻿using AuctionService.Data;
 using AuctionService.DTO;
 using AuctionService.Entities;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,28 +10,25 @@ namespace AuctionService.Controllers;
 
 [ApiController]
 [Route("api/auctions")]
-public class AuctionsController : ControllerBase
+public class AuctionsController(AuctionDbContext dbContext, IMapper mapper) : ControllerBase
 {
-    private readonly AuctionDbContext _dbContext;
-    private readonly IMapper _mapper;
-
-    public AuctionsController(AuctionDbContext dbContext, IMapper mapper)
-    {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-    }
+    private readonly AuctionDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAuctions()
+    public async Task<IActionResult> GetAllAuctions(string date)
     {
-        var auctions = await _dbContext.Auctions
-            .Include(x => x.Item)
+        var query = _dbContext.Auctions
             .OrderBy(x => x.Item.Make)
             .ThenBy(x => x.Item.Model)
-            .ToListAsync();
-        var auctionsDto = _mapper.Map<List<AuctionDto>>(auctions);
-        
-        return Ok(auctionsDto);
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(date))
+        {
+           query = query.Where(x => x.UpdatedAt.CompareTo(DateTime.Parse(date).ToUniversalTime()) > 0);
+        }
+
+        return Ok(await query.ProjectTo<AuctionDto>(_mapper.ConfigurationProvider).ToListAsync());
     }
 
     [HttpGet("{id}")]

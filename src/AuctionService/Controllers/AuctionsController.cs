@@ -5,6 +5,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Contracts;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,11 +51,13 @@ public class AuctionsController(AuctionDbContext dbContext, IMapper mapper, IPub
         return Ok(auctionDto);
     }
     
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateAuction(CreateAuctionCommand createAuctionCommand)
     {
         var auction = _mapper.Map<Auction>(createAuctionCommand);
-        auction.Seller = "test";
+
+        auction.Seller = User.Identity.Name;
         
         _dbContext.Auctions.Add(auction);
         var newAuction = _mapper.Map<AuctionDto>(auction);
@@ -82,6 +85,11 @@ public class AuctionsController(AuctionDbContext dbContext, IMapper mapper, IPub
             return NotFound();
         }
 
+        if (auction.Seller != User.Identity.Name)
+        {
+            return Forbid();
+        }
+
         auction.Item.Make = updateAuctionCommand.Make ?? auction.Item.Make;
         auction.Item.Model = updateAuctionCommand.Model?? auction.Item.Model;
         auction.Item.Year = updateAuctionCommand.Year ?? auction.Item.Year;
@@ -104,6 +112,7 @@ public class AuctionsController(AuctionDbContext dbContext, IMapper mapper, IPub
         return BadRequest("Could not save changes to DB");
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAuction(Guid id)
     {
@@ -111,6 +120,11 @@ public class AuctionsController(AuctionDbContext dbContext, IMapper mapper, IPub
         if (auction == null)
         {
             return NotFound();
+        }
+
+        if (auction.Seller != User.Identity.Name)
+        {
+            return Forbid();
         }
         
         _dbContext.Auctions.Remove(auction);

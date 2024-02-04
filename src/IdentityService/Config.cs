@@ -40,6 +40,7 @@ public static class Config
                 RequirePkce = false,
                 AllowOfflineAccess = true,
                 AccessTokenLifetime = 3600*24*30,
+                AlwaysIncludeUserClaimsInIdToken = true,
             },
         };
 }

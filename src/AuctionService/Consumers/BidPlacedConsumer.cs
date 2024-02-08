@@ -1,6 +1,7 @@
 ﻿using AuctionService.Data;
 using Contracts;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuctionService.Consumers;
 
@@ -18,10 +19,10 @@ public class BidPlacedConsumer : IConsumer<BidPlaced>
         Console.WriteLine("--> Bid placed: AuctionId={0}, BidId={1}, BidAmount={2}", context.Message.AuctionId,
             context.Message.Id, context.Message.Amount);
 
-        var auction = await _dbContext.Auctions.FindAsync(context.Message.AuctionId);
+        var auction = await _dbContext.Auctions.FindAsync(Guid.Parse(context.Message.AuctionId));
 
         if (auction.CurrentHighBid == null ||
-            context.Message.BidStatus == "Accepted" && context.Message.Amount > auction.CurrentHighBid)
+            context.Message.BidStatus.Contains("Accepted") && context.Message.Amount > auction.CurrentHighBid)
         {
             auction.CurrentHighBid = context.Message.Amount;
             await _dbContext.SaveChangesAsync();

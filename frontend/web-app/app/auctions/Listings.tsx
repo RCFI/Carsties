@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { shallow } from "zustand/shallow";
 import queryString from "query-string";
@@ -21,6 +22,8 @@ const Listings = () => {
       searchTerm: state.searchTerm,
       orderBy: state.orderBy,
       filterBy: state.filterBy,
+      seller: state.seller,
+      winner: state.winner,
     }),
     shallow
   );
@@ -36,7 +39,7 @@ const Listings = () => {
   }, [query]);
 
   if (!data) return <h3>Loading...</h3>;
-  
+
   return (
     <>
       <Filters />

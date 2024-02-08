@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using BiddingService.DTOs;
 using BiddingService.Models;
+using BiddingService.Services;
 using Contracts;
 using MassTransit;
-using MassTransit.RabbitMqTransport;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Entities;
@@ -12,7 +12,7 @@ namespace BiddingService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BidsController(IMapper mapper, IPublishEndpoint publisher) : ControllerBase
+public class BidsController(IMapper mapper, IPublishEndpoint publisher, GrpcAuctionClient client) : ControllerBase
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly IPublishEndpoint _publisher = publisher?? throw new ArgumentNullException(nameof(publisher));
@@ -25,8 +25,14 @@ public class BidsController(IMapper mapper, IPublishEndpoint publisher) : Contro
 
         if (auction == null)
         {
-            // TODO: Handle this better
-            return NotFound();
+            auction = client.GetAuction(auctionId);
+
+            if (auction == null)
+            {
+                return BadRequest("Can not accept bids on this auction at this time");
+            }
+
+            await auction.SaveAsync();
         }
 
         if (auction.Seller == User.Identity.Name)

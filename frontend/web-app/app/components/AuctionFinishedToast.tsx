@@ -31,7 +31,7 @@ const AuctionFinishedToast = ({ finishedAuction, auction }: Props) => (
             {numberWithCommas(finishedAuction.amount)}
           </p>
         ) : (
-          <p>This item didn't sell</p>
+          <p>This item didnot sell</p>
         )}
       </div>
     </div>

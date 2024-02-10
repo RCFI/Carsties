@@ -4,6 +4,7 @@ import Navbar from "./nav/Navbar";
 import ToasterProvider from "./providers/ToasterProvider";
 import SignalRProvider from "./providers/SignalRProvider";
 import { getCurrentUser } from "./actions/authActions";
+import { PublicEnvProvider } from "next-runtime-env";
 
 export const metadata: Metadata = {
   title: "Carsties",
@@ -23,7 +24,9 @@ export default async function RootLayout({
         <ToasterProvider />
         <Navbar />
         <main className="container mx-auto px-5 pt-10">
-          <SignalRProvider user={user}>{children}</SignalRProvider>
+          <PublicEnvProvider>
+            <SignalRProvider user={user}>{children}</SignalRProvider>
+          </PublicEnvProvider>
         </main>
       </body>
     </html>

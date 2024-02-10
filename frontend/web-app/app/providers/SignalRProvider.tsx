@@ -1,12 +1,13 @@
 "use client";
+import { useEnvContext } from "next-runtime-env";
+import { useEffect, useState } from "react";
+import { User } from "next-auth";
+import toast from "react-hot-toast";
+import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 
 import { useAuctionStore } from "@/hooks/useAuctionStore";
 import { useBidStore } from "@/hooks/useBidStore";
 import { Auction, AuctionFinished, Bid } from "@/types";
-import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
-import { User } from "next-auth";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import AuctionCreatedToast from "../components/AuctionCreatedToast";
 import { getDetailedViewData } from "../actions/auctionActions";
 import AuctionFinishedToast from "../components/AuctionFinishedToast";
@@ -20,10 +21,11 @@ const SignalRProvider = ({ children, user }: Props) => {
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const setCurrentPrice = useAuctionStore((state) => state.setCurrentPrice);
   const addBid = useBidStore((state) => state.addBid);
+  const { NEXT_PUBLIC_NOTIFY_URL } = useEnvContext();
 
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
-      .withUrl(process.env.NEXT_PUBLIC_NOTIFY_URL!)
+      .withUrl(NEXT_PUBLIC_NOTIFY_URL!)
       .withAutomaticReconnect()
       .build();
 

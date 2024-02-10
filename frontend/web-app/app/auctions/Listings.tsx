@@ -9,7 +9,7 @@ import Filters from "./Filters";
 import AppPagination from "../components/AppPagination";
 import { getData } from "../actions/auctionActions";
 
-import { Auction, PagedResult } from "@/types";
+import { Auction } from "@/types";
 import { useParamsStore } from "@/hooks/useParamsStore";
 import EmptyFilter from "../components/EmptyFilter";
 import { useAuctionStore } from "@/hooks/useAuctionStore";
@@ -49,7 +49,7 @@ const Listings = () => {
         setData(data);
       })
       .finally(() => setLoading(false));
-  }, [query]);
+  }, [query, setData]);
 
   if (loading) return <h3>Loading...</h3>;
 

@@ -13,7 +13,7 @@ import AuctionFinishedToast from "../components/AuctionFinishedToast";
 
 export type Props = {
   children: React.ReactNode;
-  user: User;
+  user: User | null;
 };
 
 const SignalRProvider = ({ children, user }: Props) => {
@@ -28,7 +28,7 @@ const SignalRProvider = ({ children, user }: Props) => {
       .build();
 
     setConnection(newConnection);
-  }, []);
+  }, [setConnection]);
 
   useEffect(() => {
     if (connection) {
@@ -84,7 +84,7 @@ const SignalRProvider = ({ children, user }: Props) => {
     return () => {
       connection?.stop();
     };
-  }, [connection, setCurrentPrice]);
+  }, [connection, setCurrentPrice, addBid, user]);
 
   return children;
 };

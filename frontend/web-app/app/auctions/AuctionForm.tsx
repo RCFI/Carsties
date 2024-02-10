@@ -32,7 +32,7 @@ const AuctionForm = ({ auction }: Props) => {
       reset({ make, model, mileage, color, year });
     }
     setFocus("make");
-  }, []);
+  }, [reset, setFocus, auction]);
 
   const onSubmit = async (data: FieldValues) => {
     let id = "";

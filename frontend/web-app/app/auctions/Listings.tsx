@@ -12,9 +12,10 @@ import { getData } from "../actions/auctionActions";
 import { Auction, PagedResult } from "@/types";
 import { useParamsStore } from "@/hooks/useParamsStore";
 import EmptyFilter from "../components/EmptyFilter";
+import { useAuctionStore } from "@/hooks/useAuctionStore";
 
 const Listings = () => {
-  const [data, setData] = useState<PagedResult<Auction>>();
+  const [loading, setLoading] = useState(true);
   const params = useParamsStore(
     (state) => ({
       pageNumber: state.pageNumber,
@@ -30,15 +31,27 @@ const Listings = () => {
   const setParams = useParamsStore((state) => state.setParams);
   const setPageNumber = (pageNumber: number) => setParams({ pageNumber });
 
+  const data = useAuctionStore(
+    (state) => ({
+      auctions: state.auctions,
+      totalCount: state.totalCount,
+      pageCount: state.pageCount,
+    }),
+    shallow
+  );
+  const setData = useAuctionStore((state) => state.setData);
+
   const query = queryString.stringifyUrl({ url: "", query: params });
 
   useEffect(() => {
-    getData(query).then((data) => {
-      setData(data);
-    });
+    getData(query)
+      .then((data) => {
+        setData(data);
+      })
+      .finally(() => setLoading(false));
   }, [query]);
 
-  if (!data) return <h3>Loading...</h3>;
+  if (loading) return <h3>Loading...</h3>;
 
   return (
     <>
@@ -49,7 +62,7 @@ const Listings = () => {
         <>
           <div className="grid grid-cols-4 gap-6">
             {data &&
-              data.results.map((auction: Auction) => (
+              data.auctions.map((auction: Auction) => (
                 <AuctionCard key={auction.id} auction={auction} />
               ))}
           </div>

@@ -1,7 +1,6 @@
 "use client";
 import { useParamsStore } from "@/hooks/useParamsStore";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
 const Search = () => {
@@ -29,17 +28,7 @@ const Search = () => {
             search();
           }
         }}
-        className="
-        flex-grow
-        pl-5
-        bg-transparent
-        focus:outline-none
-        border-transparent
-        focus:border-transparent
-        focus:ring-0
-        text-sm
-        text-gray-600
-      "
+        className="custom-input text-sm text-gray-600"
         type="text"
         placeholder="Search for cars by make, model or color"
       />

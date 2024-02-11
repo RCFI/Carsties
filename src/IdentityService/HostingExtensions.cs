@@ -1,4 +1,5 @@
 using Duende.IdentityServer;
+using Duende.IdentityServer.Services;
 using IdentityService.Data;
 using IdentityService.Models;
 using IdentityService.Services;
@@ -61,6 +62,17 @@ internal static class HostingExtensions
 
         app.UseStaticFiles();
         app.UseRouting();
+
+        if (app.Environment.IsProduction())
+        {
+            app.Use(async (ctx, next) =>
+            {
+                var serverUrls = app.Services.GetRequiredService<IServerUrls>();
+                serverUrls.Origin = serverUrls.Origin = "https://id.bessilen.site";
+                await next();
+            });
+        }
+        
         app.UseIdentityServer();
         app.UseAuthorization();
         

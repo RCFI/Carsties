@@ -36,7 +36,7 @@ const AuctionForm = ({ auction }: Props) => {
 
   const onSubmit = async (data: FieldValues) => {
     let id = "";
-    if (pathname === "auctions/create") {
+    if (pathname === "/auctions/create") {
       const res = await createAuction(data);
       if (res.error) {
         toast.error(res.error.status + " " + res.error.message);

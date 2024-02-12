@@ -1,4 +1,5 @@
 using System.Net;
+using Contracts.Extensions;
 using MassTransit;
 using Polly;
 using Polly.Extensions.Http;
@@ -9,6 +10,8 @@ using SearchService.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.UseTelemetry();
+
 builder.Services.AddHttpClient<AuctionSvcHttpClient>().AddPolicyHandler(GetPolicy());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMassTransit(x =>

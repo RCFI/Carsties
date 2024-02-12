@@ -1,5 +1,6 @@
 using BiddingService.Consumers;
 using BiddingService.Services;
+using Contracts.Extensions;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MongoDB.Driver;
@@ -9,6 +10,7 @@ using Polly;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.UseTelemetry();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

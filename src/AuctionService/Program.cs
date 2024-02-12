@@ -1,7 +1,7 @@
-using AuctionService;
 using AuctionService.Consumers;
 using AuctionService.Data;
 using AuctionService.Services;
+using Contracts.Extensions;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +11,8 @@ using Polly;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.UseTelemetry();
+
 builder.Services.AddDbContext<AuctionDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));

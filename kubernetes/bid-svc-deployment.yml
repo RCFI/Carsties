@@ -1,0 +1,38 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bid-svc-deployment
+spec:
+  replicas: 12
+  selector:
+    matchLabels:
+      app: bid-svc
+  template:
+    metadata:
+      labels:
+        app: bid-svc
+    spec:
+      containers:
+        - name: bid-svc
+          image: bessilen/bid-svc:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1024Mi"
+          ports:
+            - containerPort: 80
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: ASPNETCORE_URLS
+              value: http://*:80;http://*:30001
+            - name: RabbitMq__Host
+              value: 192.168.1.145
+            - name: ConnectionStrings__MongoDbConnection
+              value: mongodb://root:mongopw@192.168.1.145:27017
+            - name: GrpcAuction
+              value: http://192.168.1.145:7777
+            - name: IdentityServiceUrl
+              value: https://id.bessilen.site

@@ -6,7 +6,7 @@ namespace BiddingService.Services;
 
 public class GrpcAuctionClient(ILogger<GrpcAuctionClient> logger, IConfiguration configuration)
 {
-    public Auction GetAuction(string id)
+    public async Task<Auction> GetAuction(string id)
     {
         logger.LogInformation("Calling GetAuction with id: {id}", id);
         
@@ -16,7 +16,7 @@ public class GrpcAuctionClient(ILogger<GrpcAuctionClient> logger, IConfiguration
 
         try
         {
-            var reply = client.GetAuction(request);
+            var reply = await client.GetAuctionAsync(request);
             var auction = new Auction
             {
                 ID = reply.Auction.Id,

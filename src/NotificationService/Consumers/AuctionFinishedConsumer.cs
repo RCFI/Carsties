@@ -5,11 +5,11 @@ using NotificationService.Hubs;
 
 namespace NotificationService.Consumers;
 
-public class AuctionFinishedConsumer(IHubContext<NotificationHub> hubContext) : IConsumer<AuctionFinished>
+public class AuctionFinishedConsumer(IHubContext<NotificationHub> hubContext, ILogger<AuctionFinishedConsumer> _logger) : IConsumer<AuctionFinished>
 {
     public async Task Consume(ConsumeContext<AuctionFinished> context)
     {
-        Console.WriteLine("--> Auction finished message received: AuctionId={0}", context.Message.AuctionId);
+        _logger.LogInformation("--> Auction finished message received: AuctionId={0}", context.Message.AuctionId);
 
         await hubContext.Clients.All.SendAsync("AuctionFinished", context.Message);
     }

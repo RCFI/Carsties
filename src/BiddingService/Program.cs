@@ -1,4 +1,5 @@
 using BiddingService.Consumers;
+using BiddingService.Models;
 using BiddingService.Services;
 using Contracts.Extensions;
 using MassTransit;
@@ -56,7 +57,15 @@ app.UseAuthorization();
 app.MapControllers();
 
 await Policy.Handle<TimeoutException>().WaitAndRetryAsync(5, _ => TimeSpan.FromSeconds(10))
-    .ExecuteAndCaptureAsync(async () => await DB.InitAsync("BidDb",
-        MongoClientSettings.FromConnectionString(builder.Configuration.GetConnectionString("MongoDbConnection"))));
+    .ExecuteAndCaptureAsync(async () =>
+    {
+        await DB.InitAsync("BidDb",
+            MongoClientSettings.FromConnectionString(builder.Configuration.GetConnectionString("MongoDbConnection")));
+
+        await DB.Index<Bid>()
+            .Key(x => x.AuctionId, KeyType.Ascending)
+            .Key(x => x.Amount, KeyType.Descending)
+            .CreateAsync();
+    });
 
 app.Run();

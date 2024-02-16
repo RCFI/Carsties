@@ -25,7 +25,7 @@ public class BidsController(IMapper mapper, IPublishEndpoint publisher, GrpcAuct
 
         if (auction == null)
         {
-            auction = client.GetAuction(auctionId);
+            auction = await client.GetAuction(auctionId);
 
             if (auction == null)
             {

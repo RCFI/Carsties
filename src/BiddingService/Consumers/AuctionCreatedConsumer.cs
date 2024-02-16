@@ -5,11 +5,11 @@ using MongoDB.Entities;
 
 namespace BiddingService.Consumers;
 
-public class AuctionCreatedConsumer: IConsumer<AuctionCreated>
+public class AuctionCreatedConsumer(ILogger<AuctionCreatedConsumer> _logger): IConsumer<AuctionCreated>
 {
     public async Task Consume(ConsumeContext<AuctionCreated> context)
     {
-        Console.WriteLine("--> Consuming AuctionCreated: AuctionId={0}, Seller={1}, AuctionEnd={2}, ReservePrice={3}",
+        _logger.LogInformation("--> Consuming AuctionCreated: AuctionId={0}, Seller={1}, AuctionEnd={2}, ReservePrice={3}",
             context.Message.Id, context.Message.Seller, context.Message.AuctionEnd, context.Message.ReservePrice);
         
         var auction = new Auction

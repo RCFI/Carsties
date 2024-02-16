@@ -5,11 +5,11 @@ using SearchService.Models;
 
 namespace SearchService.Consumers;
 
-public class BidPlacedConsumer : IConsumer<BidPlaced>
+public class BidPlacedConsumer(ILogger<BidPlacedConsumer> _logger) : IConsumer<BidPlaced>
 {
     public async Task Consume(ConsumeContext<BidPlaced> context)
     {
-        Console.WriteLine("--> Consuming BidPlaced: AuctionId={0}, BidId={1}, Amount={2}", context.Message.AuctionId,
+        _logger.LogInformation("--> Consuming BidPlaced: AuctionId={0}, BidId={1}, Amount={2}", context.Message.AuctionId,
             context.Message.Id, context.Message.Amount);
 
         var auction = await DB.Find<Item>().OneAsync(context.Message.AuctionId);

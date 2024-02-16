@@ -6,13 +6,13 @@ using SearchService.Models;
 
 namespace SearchService.Consumers;
 
-public class AuctionCreatedConsumer(IMapper mapper) : IConsumer<AuctionCreated>
+public class AuctionCreatedConsumer(IMapper mapper, ILogger<AuctionCreatedConsumer> _logger) : IConsumer<AuctionCreated>
 {
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     
     public async Task Consume(ConsumeContext<AuctionCreated> context)
     {
-        Console.WriteLine($"--> Consuming AuctionCreated {context.Message.Id}");
+        _logger.LogInformation($"--> Consuming AuctionCreated {context.Message.Id}");
 
         var item = _mapper.Map<Item>(context.Message);
 

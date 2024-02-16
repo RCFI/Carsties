@@ -4,18 +4,13 @@ using MassTransit;
 
 namespace AuctionService.Consumers;
 
-public class BidPlacedConsumer : IConsumer<BidPlaced>
+public class BidPlacedConsumer(AuctionDbContext dbContext, ILogger<BidPlacedConsumer> _logger) : IConsumer<BidPlaced>
 {
-    private readonly AuctionDbContext _dbContext;
-
-    public BidPlacedConsumer(AuctionDbContext dbContext)
-    {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-    }
+    private readonly AuctionDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
     public async Task Consume(ConsumeContext<BidPlaced> context)
     {
-        Console.WriteLine("--> Bid placed: AuctionId={0}, BidId={1}, BidAmount={2}", context.Message.AuctionId,
+        _logger.LogInformation("--> Bid placed: AuctionId={0}, BidId={1}, BidAmount={2}", context.Message.AuctionId,
             context.Message.Id, context.Message.Amount);
 
         var auction = await _dbContext.Auctions.FindAsync(Guid.Parse(context.Message.AuctionId));

@@ -4,11 +4,11 @@ using Grpc.Core;
 
 namespace AuctionService.Services;
 
-public class GrpcAuctionService(AuctionDbContext dbContext) : GrpcAuction.GrpcAuctionBase
+public class GrpcAuctionService(AuctionDbContext dbContext, ILogger<GrpcAuctionService> _logger) : GrpcAuction.GrpcAuctionBase
 {
     public override async Task<GrpcAuctionResponse> GetAuction(GetAuctionRequest request, ServerCallContext context)
     {
-        Console.WriteLine("==> Received GetAuction request");
+        _logger.LogInformation("==> Received GetAuction request");
 
         var auction = await dbContext.Auctions.FindAsync(Guid.Parse(request.Id));
 

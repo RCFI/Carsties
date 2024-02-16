@@ -3,11 +3,11 @@ using MassTransit;
 
 namespace AuctionService.Consumers;
 
-public class AuctionCreatedFaultConsumer : IConsumer<Fault<AuctionCreated>>
+public class AuctionCreatedFaultConsumer(ILogger<AuctionCreatedFaultConsumer> _logger) : IConsumer<Fault<AuctionCreated>>
 {
     public async Task Consume(ConsumeContext<Fault<AuctionCreated>> context)
     {
-        Console.WriteLine("--> Consuming faulty creation");
+        _logger.LogInformation("--> Consuming faulty creation");
 
         var exception = context.Message.Exceptions.First();
 
@@ -18,7 +18,7 @@ public class AuctionCreatedFaultConsumer : IConsumer<Fault<AuctionCreated>>
         }
         else
         {
-            Console.WriteLine("--> Faulty creation ignored");
+            _logger.LogInformation("--> Faulty creation ignored");
         }
     }
 }

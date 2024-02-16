@@ -5,11 +5,11 @@ using SearchService.Models;
 
 namespace SearchService.Consumers;
 
-public class AuctionDeletedConsumer : IConsumer<AuctionDeleted>
+public class AuctionDeletedConsumer(ILogger<AuctionDeletedConsumer> _logger) : IConsumer<AuctionDeleted>
 {
     public async Task Consume(ConsumeContext<AuctionDeleted> context)
     {
-        Console.WriteLine("--> Auction deleted: {0}", context.Message.Id);
+        _logger.LogInformation("--> Auction deleted: {0}", context.Message.Id);
 
         await DB.DeleteAsync<Item>(context.Message.Id);
     }
